@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Casos de Uso - Sistema Contable Perú</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f7fa; color: #333; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        header { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); color: white; padding: 40px 0; text-align: center; }
+        header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        header p { font-size: 1.2em; opacity: 0.9; }
+        section { background: white; margin: 30px 0; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h2 { color: #1e3a8a; border-bottom: 2px solid #3b82f6; padding-bottom: 10px; margin-bottom: 20px; }
+        h3 { color: #2563eb; margin: 30px 0 15px; font-size: 1.3em; }
+        .diagram { background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0; overflow-x: auto; }
+        .mermaid { display: flex; justify-content: center; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+        th { background: #1e3a8a; color: white; }
+        tr:hover { background: #f1f5f9; }
+        .tag { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 0.85em; margin: 2px; }
+        .tag-success { background: #dcfce7; color: #166534; }
+        .tag-warning { background: #fef3c7; color: #92400e; }
+        .tag-error { background: #fee2e2; color: #991b1b; }
+        footer { text-align: center; padding: 30px; color: #64748b; }
+        .actor-box { background: #e0e7ff; padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 4px solid #3b82f6; }
+        .use-case-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; margin: 15px 0; }
+        .use-case-card { background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; }
+        .use-case-card h4 { color: #1e3a8a; margin-bottom: 8px; }
+        .use-case-card .code { background: #1e3a8a; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.8em; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Casos de Uso - Sistema Contable Perú</h1>
+        <p><a href="index.html" style="color: white; text-decoration: underline;">← Volver a Documentación Principal</a></p>
+    </header>
+
+    <div class="container">
+        <section>
+            <h2>Diagrama de Actores y Casos de Uso</h2>
+            <p>A continuación se presenta el diagrama UML de casos de uso con los actores del sistema:</p>
+            
+            <h3>Administrador del Sistema</h3>
+            <div class="diagram">
+                <div class="mermaid">
+graph TD
+    subgraph "ACTOR: Administrador"
+        A1["👤 Administrador"]
+    end
+    
+    subgraph "CASOS DE USO - ADMIN"
+        UC1["Gestionar empresas"]
+        UC2["Configurar series documentales"]
+        UC3["Gestionar usuarios"]
+        UC4["Configurar OSE"]
+        UC5["Parámetros del sistema"]
+    end
+    
+    A1 --> UC1
+    A1 --> UC2
+    A1 --> UC3
+    A1 --> UC4
+    A1 --> UC5
+</div>
+            </div>
+
+            <h3>Contador</h3>
+            <div class="diagram">
+                <div class="mermaid">
+graph TD
+    subgraph "ACTOR: Contador"
+        C1["👤 Contador"]
+    end
+    
+    subgraph "CASOS DE USO - CONTABILIDAD"
+        CC1["Crear plan de cuentas"]
+        CC2["Crear asiento contable"]
+        CC3["Aprobar asiento"]
+        CC4["Cerrar asiento"]
+        CC5["Centro de costo"]
+        CC6["Generar libro diario"]
+        CC7["Generar libro mayor"]
+        CC8["Balance de comprobación"]
+    end
+    
+    C1 --> CC1
+    C1 --> CC2
+    C1 --> CC3
+    C1 --> CC4
+    C1 --> CC5
+    C1 --> CC6
+    C1 --> CC7
+    C1 --> CC8
+</div>
+            </div>
+
+            <h3>Contador - Facturación</h3>
+            <div class="diagram">
+                <div class="mermaid">
+graph TD
+    subgraph "ACTOR: Contador"
+        C2["👤 Contador"]
+    end
+    
+    subgraph "CASOS DE USO - FACTURACIÓN"
+        CF1["Crear factura"]
+        CF2["Crear boleta"]
+        CF3["Generar XML"]
+        CF4["Firmar digitalmente"]
+        CF5["Enviar a SUNAT"]
+        CF6["Descargar PDF"]
+        CF7["Descargar XML"]
+        CF8["Descargar CDR"]
+        CF9["Crear nota de crédito"]
+        CF10["Crear nota de débito"]
+        CF11["Anular comprobante"]
+    end
+    
+    C2 --> CF1
+    C2 --> CF2
+    C2 --> CF3
+    C2 --> CF4
+    C2 --> CF5
+    C2 --> CF6
+    C2 --> CF7
+    C2 --> CF8
+    C2 --> CF9
+    C2 --> CF10
+    C2 --> CF11
+</div>
+            </div>
+
+            <h3>Almacén</h3>
+            <div class="diagram">
+                <div class="mermaid">
+graph TD
+    subgraph "ACTOR: Almacén"
+        AL["👤 Personal Almacén"]
+    end
+    
+    subgraph "CASOS DE USO - INVENTARIO"
+        I1["Crear almacén"]
+        I2["Crear categoría"]
+        I3["Crear producto"]
+        I4["Entrada de stock"]
+        I5["Salida de stock"]
+        I6["Consultar kardex"]
+        I7["Ver stock por almacén"]
+        I8["Ajuste de inventario"]
+    end
+    
+    AL --> I1
+    AL --> I2
+    AL --> I3
+    AL --> I4
+    AL --> I5
+    AL --> I6
+    AL --> I7
+    AL --> I8
+</div>
+            </div>
+
+            <h3>Recursos Humanos</h3>
+            <div class="diagram">
+                <div class="mermaid">
+graph TD
+    subgraph "ACTOR: RRHH"
+        R["👤 Recursos Humanos"]
+    end
+    
+    subgraph "CASOS DE USO - NÓMINA"
+        N1["Crear empleado"]
+        N2["Registrar remuneración"]
+        N3["Registrar descuento"]
+        N4["Registrar asistencia"]
+        N5["Calcular CTS"]
+        N6["Calcular gratificación"]
+        N7["Generar planilla"]
+        N8["Exportar PLAME"]
+        N9["Exportar PDF planilla"]
+    end
+    
+    R --> N1
+    R --> N2
+    R --> N3
+    R --> N4
+    R --> N5
+    R --> N6
+    R --> N7
+    R --> N8
+    R --> N9
+</div>
+            </div>
+        </section>
+
+        <section>
+            <h2>Diagrama Completo de Casos de Uso</h2>
+            <div class="diagram">
+                <div class="mermaid">
+graph TD
+    subgraph "ACTORES"
+        Actor1["👤 Administrador"]
+        Actor2["👤 Contador"]
+        Actor3["👤 Almacén"]
+        Actor4["👤 RRHH"]
+    end
+    
+    Actor1 --> UC_ADM1["Gestionar empresas"]
+    Actor1 --> UC_ADM2["Gestionar usuarios"]
+    Actor1 --> UC_ADM3["Configurar OSE"]
+    
+    Actor2 --> UC_CON1["Crear asiento"]
+    Actor2 --> UC_CON2["Aprobar asiento"]
+    Actor2 --> UC_CON3["Generar reportes"]
+    
+    Actor2 --> UC_FAC1["Crear CPE"]
+    Actor2 --> UC_FAC2["Generar XML"]
+    Actor2 --> UC_FAC3["Firmar CPE"]
+    Actor2 --> UC_FAC4["Enviar SUNAT"]
+    Actor2 --> UC_FAC5["Anular CPE"]
+    
+    Actor3 --> UC_INV1["Gestionar productos"]
+    Actor3 --> UC_INV2["Movimientos stock"]
+    Actor3 --> UC_INV3["Consultar kardex"]
+    
+    Actor4 --> UC_NOM1["Gestionar empleados"]
+    Actor4 --> UC_NOM2["Registrar asistencia"]
+    Actor4 --> UC_NOM3["Generar planilla"]
+    Actor4 --> UC_NOM4["Exportar PLAME"]
+</div>
+            </div>
+        </section>
+
+        <section>
+            <h2>Matriz de Casos de Uso por Módulo</h2>
+            
+            <h3>Core - Autenticación y Empresas</h3>
+            <table>
+                <tr><th>Código</th><th>Caso de Uso</th><th>Actor</th><th>Descripción</th><th>Estado</th></tr>
+                <tr><td>UC-001</td><td>Iniciar sesión</td><td>Usuario</td><td>Iniciar sesión con username y password</td><td><span class="tag tag-success">✅</span></td></tr>
+                <tr><td>UC-002</td><td>Cerrar sesión</td><td>Usuario</td><td>Cerrar sesión actual</td><td><span class="tag tag-success">✅</span></td></tr>
+                <tr><td>UC-003</td><td>Refresh token</td><td>Sistema</td><td>Renovar token JWT</td><td><span class="tag tag-success">✅</span></td></tr>
+                <tr><td>UC-004</td><td>Crear empresa</td><td>Administrador</td><td>Registrar nueva empresa</td><td><span class="tag tag-success">✅</span></td></tr>
+                <tr><td>UC-005</td><td>Editar empresa</td><td>Administrador</td><td>Modificar datos de empresa</td><td><span class="tag tag-success">✅</span></td></tr>
+                <tr><td>UC-006</td><td>Configurar serie</td><td>Administrador</td><td>Agregar serie documental</td><td><span class="tag tag-success">✅</span></td></tr>
+                <tr><td>UC-007</td><td>Crear usuario</td><td>Administrador</td><td>Crear usuario por empresa</td><td><span class="tag tag-success">✅</span></td></tr>
+            </table>
+
+            <h3>Contabilidad</h3>
+            <table>
+                <tr><th>Código</th><th>Caso de Uso</th><th>Actor</th><th>Descripción</th><th>Estado</th></tr>
+                <tr><td>UC-010</td><td>Crear plan de cuentas</td><td>Contador</td><td>Crear cuenta contable</td><td><span class="tag tag-success">✅</span></td></tr>
+                <tr><td>UC-011</td><td>Crear cuenta padre/hijo</td><td>Contador</td><td>Crear cuenta jerárquica</td><td><span class="tag tag-success">✅</span></td></tr>
+                <tr><td>UC-012</td><td>Crear centro de costo</td><td>Contador</td><td>Agregar centro de costo</td><td><span class="tag tag-success">✅</span></td></tr>
+                <tr><td>UC-013</td><td>Crear asiento</td><td>Contador</td><td>Crear asiento contable</td><td><span class="tag tag-success">✅</span></td></tr>
+                <tr><td>UC-014</td><td>Validar partida doble</td><td>Sistema</td><td>Verificar debe == haber</td><td><span class="tag tag-success">✅</span></td></tr>
+                <tr><td>UC-015</td><td>Aprobar asiento</td><td>Contador</td><td>Aprobar asiento contable</td><td><span class="tag tag-success">✅</span></td></tr>
+                <tr><td>UC-016</td><td>Cerrar asiento</td><td>Contador</td><td>Cerrar asiento (no editable)</td><td><span class="tag tag-success">✅</span></td></tr>
+                <tr><td>UC-017</td><td>Generar libro diario</td><td>Contador</td><td>Reporte libro diario</td><td><span class="tag tag-success">✅</span></td></tr>
+                <tr><td>UC-018</td><td>Generar libro mayor</td><td>Contador</td><td>Reporte libro mayor</td><td><span class="tag tag-success">✅</span></td></tr>
+                <tr><td>UC-019</td><td>Balance comprobación</td><td>Contador</td><td>Balance de sumas y saldos</td><td><span class="tag tag-success">✅</span></td></tr>
+            </table>
+
+            <h3>Facturación Electrónica</h3>
+            <table>
+                <tr><th>Código</th><th>Caso de Uso</th><th>Actor</th><th>Descripción</th><th>Estado</th></tr>
+                <tr><td>UC-020</td><td>Crear factura</td><td>Contador</td><td>Crear factura electrónica</td><td><span class="tag tag-success">✅</span></td></tr>
+                <tr><td>UC-021</td><td>Crear boleta</td><td>Contador</td><td>Crear boleta electrónica</td><td><span class="tag tag-success">✅</span></td></tr>
+                <tr><td>UC-022</td><td>Generar XML</td><td>Contador</td><td>Generar archivo XML</td><td><span class="tag tag-warning">⏳</span></td></tr>
+                <tr><td>UC-023</td><td>Firmar CPE</td><td>Contador</td><td>Firmar con certificado</td><td><span class="tag tag-warning">⏳</span></td></tr>
+                <tr><td>UC-024</td><td>Enviar a SUNAT</td><td>Contador</td><td>Enviar CPE a SUNAT</td><td><span class="tag tag-warning">⏳</span></td></tr>
+                <tr><td>UC-025</td><td>Consultar estado</td><td>Contador</td><td>Consultar estado SUNAT</td><td><span class="tag tag-warning">⏳</span></td></tr>
+                <tr><td>UC-026</td><td>Descargar PDF</td><td>Contador</td><td>Obtener PDF del CPE</td><td><span class="tag tag-success">✅</span></td></tr>
+                <tr><td>UC-027</td><td>Descargar XML</td><td>Contador</td><td>Obtener XML firmado</td><td><span class="tag tag-warning">⏳</span></td></tr>
+                <tr><td>UC-028</td><td>Descargar CDR</td><td>Constador</td><td>Obtener CDR de SUNAT</td><td><span class="tag tag-warning">⏳</span></td></tr>
+                <tr><td>UC-029</td><td>Crear nota de crédito</td><td>Contador</td><td>Crear NC (07)</td><td><span class="tag tag-success">✅</span></td></tr>
+                <tr><td>UC-030</td><td>Crear nota de débito</td><td>Contador</td><td>Crear ND (08)</td><td><span class="tag tag-success">✅</span></td></tr>
+                <tr><td>UC-031</td><td>Anular comprobante</td><td>Contador</td><td>Anular CPE</td><td><span class="tag tag-success">✅</span></td></tr>
+            </table>
+
+            <h3>Inventario</h3>
+            <table>
+                <tr><th>Código</th><th>Caso de Uso</th><th>Actor</th><th>Descripción</th><th>Estado</th></tr>
+                <tr><td>UC-040</td><td>Crear almacén</td><td>Almacén</td><td>Registrar almacén</td><td><span class="tag tag-success">✅</span></td></tr>
+                <tr><td>UC-041</td><td>Crear categoría</td><td>Almacén</td><td>Agregar categoría</td><td><span class="tag tag-success">✅</span></td></tr>
+                <tr><td>UC-042</td><td>Crear producto</td><td>Almacén</td><td>Registrar producto</td><td><span class="tag tag-success">✅</span></td></tr>
+                <tr><td>UC-043</td><td>Entrada de stock</td><td>Almacén</td><td>Registrar entrada</td><td><span class="tag tag-success">✅</span></td></tr>
+                <tr><td>UC-044</td><td>Salida de stock</td><td>Almacén</td><td>Registrar salida</td><td><span class="tag tag-success">✅</span></td></tr>
+                <tr><td>UC-045</td><td>Consultar kárdex</td><td>Almacén</td><td>Ver historial producto</td><td><span class="tag tag-success">✅</span></td></tr>
+                <tr><td>UC-046</td><td>Ver stock por almacén</td><td>Almacén</td><td>Stock detallado</td><td><span class="tag tag-success">✅</span></td></tr>
+                <tr><td>UC-047</td><td>Alerta stock mínimo</td><td>Sistema</td><td>Notificar bajo stock</td><td><span class="tag tag-success">✅</span></td></tr>
+                <tr><td>UC-048</td><td>Ajuste de inventario</td><td>Almacén</td><td>Ajustar diferencias</td><td><span class="tag tag-success">✅</span></td></tr>
+            </table>
+
+            <h3>Nómina</h3>
+            <table>
+                <tr><th>Código</th><th>Caso de Uso</th><th>Actor</th><th>Descripción</th><th>Estado</th></tr>
+                <tr><td>UC-050</td><td>Crear empleado</td><td>RRHH</td><td>Registrar empleado</td><td><span class="tag tag-success">✅</span></td></tr>
+                <tr><td>UC-051</td><td>Registrar remuneración</td><td>RRHH</td><td>Agregar ingresos</td><td><span class="tag tag-success">✅</span></td></tr>
+                <tr><td>UC-052</td><td>Registrar descuento</td><td>RRHH</td><td>Agregar descuentos</td><td><span class="tag tag-success">✅</span></td></tr>
+                <tr><td>UC-053</td><td>Registrar asistencia</td><td>RRHH</td><td>Registrar asistencia</td><td><span class="tag tag-success">✅</span></td></tr>
+                <tr><td>UC-054</td><td>Calcular CTS</td><td>RRHH</td><td>Calcular CTS semestral</td><td><span class="tag tag-success">✅</span></td></tr>
+                <tr><td>UC-055</td><td>Calcular gratificación</td><td>RRHH</td><td>Calcular gratificación</td><td><span class="tag tag-success">✅</span></td></tr>
+                <tr><td>UC-056</td><td>Generar planilla</td><td>RRHH</td><td>Generar detalles planilla</td><td><span class="tag tag-success">✅</span></td></tr>
+                <tr><td>UC-057</td><td>Exportar PLAME</td><td>RRHH</td><td>Exportar archivo PDT</td><td><span class="tag tag-warning">⏳</span></td></tr>
+                <tr><td>UC-058</td><td>Exportar PDF planilla</td><td>RRHH</td><td>Exportar PDF</td><td><span class="tag tag-warning">⏳</span></td></tr>
+                <tr><td>UC-059</td><td>Resumen mensual</td><td>RRHH</td><td>Reporte asistencia</td><td><span class="tag tag-success">✅</span></td></tr>
+            </table>
+        </section>
+
+    </div>
+
+    <footer>
+        <p>Sistema Contable Perú - Casos de Uso v1.0</p>
+    </footer>
+
+    <script>
+        mermaid.initialize({ startOnLoad: true });
+    </script>
+</body>
+</html>
