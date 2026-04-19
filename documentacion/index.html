@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentación Técnica - Sistema Contable Perú</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f7fa; color: #333; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        header { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); color: white; padding: 40px 0; text-align: center; }
+        header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        header p { font-size: 1.2em; opacity: 0.9; }
+        nav { background: #fff; padding: 15px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
+        nav ul { list-style: none; display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; }
+        nav a { color: #1e3a8a; text-decoration: none; font-weight: 600; padding: 8px 15px; border-radius: 5px; transition: all 0.3s; }
+        nav a:hover { background: #1e3a8a; color: white; }
+        section { background: white; margin: 30px 0; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h2 { color: #1e3a8a; border-bottom: 2px solid #3b82f6; padding-bottom: 10px; margin-bottom: 20px; }
+        h3 { color: #2563eb; margin: 20px 0 10px; }
+        .diagram { background: #f8fafc; padding: 20px; border-radius: 8px; margin: 15px 0; overflow-x: auto; }
+        .mermaid { display: flex; justify-content: center; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+        th { background: #1e3a8a; color: white; }
+        tr:hover { background: #f1f5f9; }
+        .card { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 20px 0; }
+        .card-item { background: #f8fafc; padding: 20px; border-radius: 8px; border-left: 4px solid #3b82f6; }
+        .card-item h4 { color: #1e3a8a; margin-bottom: 10px; }
+        .tag { display: inline-block; background: #dbeafe; color: #1e40af; padding: 4px 10px; border-radius: 20px; font-size: 0.85em; margin: 2px; }
+        .tag-success { background: #dcfce7; color: #166534; }
+        .tag-warning { background: #fef3c7; color: #92400e; }
+        .tag-error { background: #fee2e2; color: #991b1b; }
+        footer { text-align: center; padding: 30px; color: #64748b; }
+        .toc { background: #f1f5f9; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .toc ul { list-style: none; }
+        .toc li { margin: 8px 0; }
+        .toc a { color: #3b82f6; text-decoration: none; }
+        .toc a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1> Sistema Contable Perú</h1>
+        <p>Documentación Técnica v1.0</p>
+    </header>
+    
+    <nav>
+        <ul>
+            <li><a href="#arquitectura">Arquitectura</a></li>
+            <li><a href="#bbdd">Base de Datos</a></li>
+            <li><a href="#clases">Diagrama Clases</a></li>
+            <li><a href="#componentes">Componentes</a></li>
+            <li><a href="#casos">Casos de Uso</a></li>
+            <li><a href="#actividad">Actividad</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <section id="arquitectura">
+            <h2>Arquitectura del Sistema</h2>
+            <p>El Sistema Contable Perú es una aplicación web multi-tenant desarrollada en Django (backend) y React (frontend), diseñada para estudios contables en Perú.</p>
+            
+            <div class="card">
+                <div class="card-item">
+                    <h4>Backend</h4>
+                    <ul>
+                        <li><strong>Framework:</strong> Django 5.x + DRF</li>
+                        <li><strong>Base de datos:</strong> PostgreSQL 15</li>
+                        <li><strong>Auth:</strong> JWT (SimpleJWT)</li>
+                        <li><strong>API:</strong> REST</li>
+                    </ul>
+                </div>
+                <div class="card-item">
+                    <h4>Frontend</h4>
+                    <ul>
+                        <li><strong>Framework:</strong> React 18 + TypeScript</li>
+                        <li><strong>Build:</strong> Vite</li>
+                        <li><strong>State:</strong> Zustand</li>
+                        <li><strong>UI:</strong> TailwindCSS</li>
+                    </ul>
+                </div>
+                <div class="card-item">
+                    <h4>Módulos</h4>
+                    <ul>
+                        <li><strong>Core:</strong> Auth, Empresas</li>
+                        <li><strong>Contabilidad:</strong> PCGE, Asientos</li>
+                        <li><strong>Facturación:</strong> CPE, SUNAT</li>
+                        <li><strong>Inventario:</strong> Productos, Kárdex</li>
+                        <li><strong>Nómina:</strong> Empleados, Planillas</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="diagram">
+                <div class="mermaid">
+erDiagram
+    CORE_EMPRESA ||--o{ CORE_USUARIO : tiene
+    CORE_EMPRESA ||--o{ CONTABILIDAD_PLAN_CUENTA : contiene
+    CORE_EMPRESA ||--o{ CONTABILIDAD_ASiento : registra
+    CORE_EMPRESA ||--o{ FACTURACION_COMPROBANTE : emite
+    CORE_EMPRESA ||--o{ INVENTARIO_PRODUCTO : gestiona
+    CORE_EMPRESA ||--o{ NOMINA_EMPLEADO : tiene
+</div>
+            </div>
+        </section>
+
+        <section id="bbdd">
+            <h2>Diagrama de Base de Datos</h2>
+            
+            <h3>Core - Usuarios y Empresas</h3>
+            <div class="diagram">
+                <div class="mermaid">
+erDiagram
+    CORE_USUARIO {
+        int id PK
+        string username
+        string password
+        string email
+        string tipo_usuario
+        int empresa_id FK
+        string telefono
+        datetime fecha_registro
+    }
+    CORE_EMPRESA {
+        int id PK
+        string razon_social
+        string numero_documento
+        string tipo_documento
+        string direccion
+        string tipo_regimen
+        boolean activa
+        file certificado_digital
+        string ose_token
+    }
+    CORE_SERIE_DOCUMENTO {
+        int id PK
+        int empresa_id FK
+        string tipo_documento
+        string serie
+        int correlativo
+    }
+</div>
+            </div>
+
+            <h3>Contabilidad</h3>
+            <div class="diagram">
+                <div class="mermaid">
+erDiagram
+    CONTABILIDAD_PLAN_CUENTA {
+        int id PK
+        int empresa_id FK
+        string codigo
+        string nombre
+        string naturaleza
+        string tipo_cuenta
+        int nivel
+        int padre_id FK
+        boolean acepta_movimiento
+    }
+    CONTABILIDAD_ASiento {
+        int id PK
+        int empresa_id FK
+        string numero
+        date fecha
+        decimal debe
+        decimal haber
+        string estado
+        boolean cerrado
+    }
+    CONTABILIDAD_DETALLE_ASiento {
+        int id PK
+        int asiento_id FK
+        int cuenta_id FK
+        decimal debe
+        decimal haber
+    }
+</div>
+            </div>
+
+            <h3>Facturación Electrónica</h3>
+            <div class="diagram">
+                <div class="mermaid">
+erDiagram
+    FACTURACION_COMPROBANTE {
+        int id PK
+        int empresa_id FK
+        string tipo_documento
+        string serie
+        string correlativo
+        string numero
+        string cliente_numero_documento
+        decimal importe_subtotal
+        decimal importe_igv
+        decimal importe_total
+        string estado
+        text xml_firmado
+        text cdr_sunat
+    }
+    FACTURACION_DETALLE_COMPROBANTE {
+        int id PK
+        int comprobante_id FK
+        int numero_item
+        string descripcion
+        decimal cantidad
+        decimal precio_unitario
+        decimal igv
+        decimal importe_total
+    }
+</div>
+            </div>
+
+            <h3>Inventario</h3>
+            <div class="diagram">
+                <div class="mermaid">
+erDiagram
+    INVENTARIO_PRODUCTO {
+        int id PK
+        int empresa_id FK
+        string codigo
+        string nombre
+        decimal cantidad
+        decimal costo_unitario
+        decimal precio_venta
+    }
+    INVENTARIO_KARDEX {
+        int id PK
+        int empresa_id FK
+        int producto_id FK
+        string tipo_movimiento
+        decimal cantidad
+        decimal costo_unitario
+        decimal cantidad_saldo
+    }
+    INVENTARIO_ALMACEN {
+        int id PK
+        int empresa_id FK
+        string nombre
+        boolean principal
+    }
+</div>
+            </div>
+
+            <h3>Nómina</h3>
+            <div class="diagram">
+                <div class="mermaid">
+erDiagram
+    NOMINA_EMPLEADO {
+        int id PK
+        int empresa_id FK
+        string numero_documento
+        string nombres
+        string apellido_paterno
+        string cargo
+        date fecha_ingreso
+        boolean activo
+    }
+    NOMINA_REMUNERACION {
+        int id PK
+        int empleado_id FK
+        string periodo
+        decimal basic_salary
+        decimal total_ingreso
+    }
+    NOMINA_PLANILLA {
+        int id PK
+        int empresa_id FK
+        string periodo
+        int total_empleados
+        decimal total_neto
+        string estado
+    }
+</div>
+            </div>
+        </section>
+
+        <section id="clases">
+            <h2>Diagrama de Clases</h2>
+            <p>Diagrama simplificado de las principales clases del sistema:</p>
+            <div class="diagram">
+                <div class="mermaid">
+classDiagram
+    class Usuario {
+        +id: int
+        +username: str
+        +email: str
+        +tipo_usuario: str
+        +empresa: Empresa
+        +login()
+        +logout()
+    }
+    class Empresa {
+        +id: int
+        +razon_social: str
+        +numero_documento: str
+        +ose_enabled: bool
+        +crearSerie()
+        +configurarOSE()
+    }
+    class PlanCuenta {
+        +id: int
+        +codigo: str
+        +nombre: str
+        +naturaleza: str
+        +tipo_cuenta: str
+        +nivel: int
+        +acepta_movimiento: bool
+    }
+    class Asiento {
+        +id: int
+        +numero: str
+        +fecha: date
+        +debe: Decimal
+        +haber: Decimal
+        +estado: str
+        +cerrado: bool
+        +calcular_totales()
+        +validar_partida_doble()
+    }
+    class DetalleAsiento {
+        +id: int
+        +cuenta: PlanCuenta
+        +debe: Decimal
+        +haber: Decimal
+    }
+    class Comprobante {
+        +id: int
+        +tipo_documento: str
+        +serie: str
+        +numero: str
+        +estado: str
+        +generar()
+        +firmar()
+        +enviar_sunat()
+    }
+    class Producto {
+        +id: int
+        +codigo: str
+        +nombre: str
+        +cantidad: Decimal
+        +costo_unitario: Decimal
+    }
+    class Kardex {
+        +id: int
+        +tipo_movimiento: str
+        +cantidad: Decimal
+        +actualizar_stock()
+    }
+    class Empleado {
+        +id: int
+        +numero_documento: str
+        +nombres: str
+        +cargo: str
+        +activo: bool
+    }
+    class Planilla {
+        +id: int
+        +periodo: str
+        +total_neto: Decimal
+        +generar()
+        +exportar_plame()
+    }
+    
+    Empresa --> Usuario
+    Empresa --> PlanCuenta
+    Empresa --> Asiento
+    Asiento --> DetalleAsiento
+    PlanCuenta --> DetalleAsiento
+    Empresa --> Comprobante
+    Empresa --> Producto
+    Producto --> Kardex
+    Empresa --> Empleado
+    Empleado --> Planilla
+</div>
+            </div>
+        </section>
+
+        <section id="componentes">
+            <h2>Diagrama de Componentes</h2>
+            <div class="diagram">
+                <div class="mermaid">
+graph TD
+    subgraph "Frontend (React + TypeScript)"
+        UI[UI Components<br/>TailwindCSS]
+        ST[State Management<br/>Zustand]
+        API[API Client<br/>Axios]
+        RT[React Router]
+        Q[Query Client<br/>TanStack Query]
+    end
+    
+    subgraph "API Layer"
+        AUTH[Auth JWT<br/>SimpleJWT]
+        V[Viewsets<br/>DRF]
+        S[Serializers<br/>DRF]
+        M[Middleware<br/>Tenant]
+    end
+    
+    subgraph "Backend (Django)"
+        CORE[Core<br/>Auth, Empresas]
+        CONT[Contabilidad<br/>PCGE, Asientos]
+        FACT[Facturación<br/>CPE, SUNAT]
+        INV[Inventario<br/>Kárdex]
+        NOM[Nómina<br/>Planillas]
+    end
+    
+    subgraph "Database"
+        DB[(PostgreSQL<br/>15)]
+    end
+    
+    UI --> ST
+    UI --> RT
+    ST --> API
+    API --> Q
+    Q --> AUTH
+    
+    AUTH --> V
+    V --> S
+    S --> M
+    
+    M --> CORE
+    M --> CONT
+    M --> FACT
+    M --> INV
+    M --> NOM
+    
+    CORE --> DB
+    CONT --> DB
+    FACT --> DB
+    INV --> DB
+    NOM --> DB
+    
+    SUNAT["SUNAT<br/>OSE/PSE"] --> FACT
+</div>
+            </div>
+        </section>
+
+        <section id="casos">
+            <h2>Casos de Uso</h2>
+            
+            <h3>Core - Autenticación</h3>
+            <table>
+                <tr><th>Código</th><th>Actor</th><th>Caso de Uso</th><th>Estado</th></tr>
+                <tr><td>UC-001</td><td>Usuario</td><td>Iniciar sesión</td><td><span class="tag tag-success">Implementado</span></td></tr>
+                <tr><td>UC-002</td><td>Usuario</td><td>Cerrar sesión</td><td><span class="tag tag-success">Implementado</span></td></tr>
+                <tr><td>UC-003</td><td>Sistema</td><td>Refresh token JWT</td><td><span class="tag tag-success">Implementado</span></td></tr>
+            </table>
+
+            <h3>Contabilidad</h3>
+            <table>
+                <tr><th>Código</th><th>Actor</th><th>Caso de Uso</th><th>Estado</th></tr>
+                <tr><td>UC-010</td><td>Contador</td><td>Crear plan de cuentas</td><td><span class="tag tag-success">Implementado</span></td></tr>
+                <tr><td>UC-013</td><td>Contador</td><td>Crear asiento contable</td><td><span class="tag tag-success">Implementado</span></td></tr>
+                <tr><td>UC-015</td><td>Contador</td><td>Aprobar asiento</td><td><span class="tag tag-success">Implementado</span></td></tr>
+                <tr><td>UC-016</td><td>Contador</td><td>Cerrar asiento</td><td><span class="tag tag-success">Implementado</span></td></tr>
+            </table>
+
+            <h3>Facturación</h3>
+            <table>
+                <tr><th>Código</th><th>Actor</th><th>Caso de Uso</th><th>Estado</th></tr>
+                <tr><td>UC-020</td><td>Contador</td><td>Crear comprobante</td><td><span class="tag tag-success">Implementado</span></td></tr>
+                <tr><td>UC-022</td><td>Contador</td><td>Generar XML</td><td><span class="tag tag-warning">Pendiente</span></td></tr>
+                <tr><td>UC-023</td><td>Contador</td><td>Firmar CPE</td><td><span class="tag tag-warning">Pendiente</span></td></tr>
+                <tr><td>UC-024</td><td>Contador</td><td>Enviar a SUNAT</td><td><span class="tag tag-warning">Pendiente</span></td></tr>
+                <tr><td>UC-031</td><td>Contador</td><td>Anular comprobante</td><td><span class="tag tag-success">Implementado</span></td></tr>
+            </table>
+
+            <h3>Inventario</h3>
+            <table>
+                <tr><th>Código</th><th>Actor</th><th>Caso de Uso</th><th>Estado</th></tr>
+                <tr><td>UC-040</td><td>Almacén</td><td>Crear almacén</td><td><span class="tag tag-success">Implementado</span></td></tr>
+                <tr><td>UC-042</td><td>Almacén</td><td>Crear producto</td><td><span class="tag tag-success">Implementado</span></td></tr>
+                <tr><td>UC-043</td><td>Almacén</td><td>Registrar entrada stock</td><td><span class="tag tag-success">Implementado</span></td></tr>
+                <tr><td>UC-045</td><td>Almacén</td><td>Consultar kárdex</td><td><span class="tag tag-success">Implementado</span></td></tr>
+            </table>
+
+            <h3>Nómina</h3>
+            <table>
+                <tr><th>Código</th><th>Actor</th><th>Caso de Uso</th><th>Estado</th></tr>
+                <tr><td>UC-050</td><td>RRHH</td><td>Crear empleado</td><td><span class="tag tag-success">Implementado</span></td></tr>
+                <tr><td>UC-056</td><td>RRHH</td><td>Generar planilla</td><td><span class="tag tag-success">Implementado</span></td></tr>
+                <tr><td>UC-057</td><td>RRHH</td><td>Exportar PLAME</td><td><span class="tag tag-warning">Pendiente</span></td></tr>
+            </table>
+        </section>
+
+        <section id="actividad">
+            <h2>Diagramas de Actividad</h2>
+            
+            <h3>Flujo: Crear Asiento Contable</h3>
+            <div class="diagram">
+                <div class="mermaid">
+flowchart TD
+    A([Inicio]) --> B[Seleccionar cuentas]
+    B --> C[Ingresar debe/haber]
+    C --> D{Validar\ndebe = haber?}
+    D -->|No| E[Mostrar error]
+    E --> C
+    D -->|Sí| F[Guardar asiento]
+    F --> G[Estado = pendiente]
+    G --> H{Usuario aprueba?}
+    H -->|No| I([Fin])
+    H -->|Sí| J[Aprobar asiento]
+    J --> K[Estado = aprobado]
+    K --> I
+</div>
+            </div>
+
+            <h3>Flujo: Emitir Comprobante Electrónico</h3>
+            <div class="diagram">
+                <div class="mermaid">
+flowchart TD
+    A([Inicio]) --> B[Crear CPE con detalles]
+    B --> C[Generar XML]
+    C --> D{Firmar digitalmente}
+    D -->|Error| E[Mostrar error]
+    E --> C
+    D -->|OK| F[XML Firmado]
+    F --> G[Enviar a SUNAT/OSE]
+    G --> H{Respuesta OK?}
+    H -->|No| I[Guardar CDR Error]
+    I --> J([Fin])
+    H -->|Sí| K[Guardar CDR Aceptado]
+    K --> L[Estado = aceptado]
+    L --> M[Generar PDF]
+    M --> N([Fin])
+</div>
+            </div>
+
+            <h3>Flujo: Gestión de Inventario</h3>
+            <div class="diagram">
+                <div class="mermaid">
+flowchart TD
+    A([Inicio]) --> B[Seleccionar producto]
+    B --> C[Seleccionar tipo movimiento]
+    C --> D{Entrada o Salida?}
+    D -->|Entrada| E[Ingresar cantidad y costo]
+    D -->|Salida| F[Validar stock disponible]
+    F --> G{Stock >= cantidad?}
+    G -->|No| H[Mostrar error]
+    H --> B
+    G -->|Sí| E
+    E --> I[Calcular costo promedio]
+    I --> J[Actualizar kardex]
+    J --> K[Actualizar stock producto]
+    K --> L([Fin])
+</div>
+            </div>
+
+            <h3>Flujo: Generación de Planilla</h3>
+            <div class="diagram">
+                <div class="mermaid">
+flowchart TD
+    A([Inicio]) --> B[Seleccionar período]
+    B --> C[Obtener empleados activos]
+    C --> D[Para cada empleado]
+    D --> E[Crear remuneración]
+    E --> F[Calcular descuentos AFP]
+    F --> G[Calcular otros descuentos]
+    G --> H[Calcular neto a pagar]
+    H --> I{¿Más empleados?}
+    I -->|Sí| D
+    I -->|No| J[Crear registro planilla]
+    J --> K[Calcular totales]
+    K --> L{Exportar PLAME?}
+    L -->|Sí| M[Generar archivo txt]
+    M --> N([Fin])
+    L -->|No| N
+</div>
+            </div>
+        </section>
+
+    </div>
+
+    <footer>
+        <p> Sistema Contable Perú - Documentación Técnica v1.0</p>
+    </footer>
+
+    <script>
+        mermaid.initialize({ startOnLoad: true });
+    </script>
+</body>
+</html>
