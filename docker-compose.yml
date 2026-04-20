@@ -23,14 +23,13 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     container_name: contabilidad_api
-    command: python manage.py runserver 0.0.0.0:8000
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
     volumes:
       - ./backend:/app
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL=postgres://admin:cont123456@postgres:5432/contabilidad
-      - DEBUG=True
+      - DATABASE_URL=postgresql://admin:cont123456@postgres:5432/contabilidad
       - SECRET_KEY=django-insecure-dev-key-change-in-production
     depends_on:
       postgres:

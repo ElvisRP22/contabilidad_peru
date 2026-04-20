@@ -41,9 +41,9 @@
     </style>
 </head>
 <body>
-    <header>
+<header>
         <h1> Sistema Contable Perú</h1>
-        <p>Documentación Técnica v1.0</p>
+        <p>Documentación Técnica v2.0 - FastAPI</p>
     </header>
     
     <nav>
@@ -61,16 +61,17 @@
     <div class="container">
         <section id="arquitectura">
             <h2>Arquitectura del Sistema</h2>
-            <p>El Sistema Contable Perú es una aplicación web multi-tenant desarrollada en Django (backend) y React (frontend), diseñada para estudios contables en Perú.</p>
+            <p>El Sistema Contable Perú es una aplicación web multi-tenant desarrollada en FastAPI (backend) y React (frontend), diseñada para estudios contables en Perú.</p>
             
             <div class="card">
                 <div class="card-item">
                     <h4>Backend</h4>
                     <ul>
-                        <li><strong>Framework:</strong> Django 5.x + DRF</li>
+                        <li><strong>Framework:</strong> FastAPI</li>
+                        <li><strong>ORM:</strong> SQLModel</li>
                         <li><strong>Base de datos:</strong> PostgreSQL 15</li>
-                        <li><strong>Auth:</strong> JWT (SimpleJWT)</li>
-                        <li><strong>API:</strong> REST</li>
+                        <li><strong>Auth:</strong> JWT (python-jose)</li>
+                        <li><strong>API:</strong> REST + OpenAPI</li>
                     </ul>
                 </div>
                 <div class="card-item">
@@ -79,6 +80,7 @@
                         <li><strong>Framework:</strong> React 18 + TypeScript</li>
                         <li><strong>Build:</strong> Vite</li>
                         <li><strong>State:</strong> Zustand</li>
+                        <li><strong>HTTP:</strong> Axios</li>
                         <li><strong>UI:</strong> TailwindCSS</li>
                     </ul>
                 </div>
@@ -391,13 +393,13 @@ graph TD
     end
     
     subgraph "API Layer"
-        AUTH[Auth JWT<br/>SimpleJWT]
-        V[Viewsets<br/>DRF]
-        S[Serializers<br/>DRF]
-        M[Middleware<br/>Tenant]
+        AUTH[Auth JWT<br/>python-jose]
+        R[Routers<br/>FastAPI]
+        S[Schemas<br/>Pydantic]
+        D[Dependencies<br/>get_current_user]
     end
     
-    subgraph "Backend (Django)"
+    subgraph "Backend (FastAPI)"
         CORE[Core<br/>Auth, Empresas]
         CONT[Contabilidad<br/>PCGE, Asientos]
         FACT[Facturación<br/>CPE, SUNAT]
@@ -415,15 +417,15 @@ graph TD
     API --> Q
     Q --> AUTH
     
-    AUTH --> V
-    V --> S
-    S --> M
+    AUTH --> R
+    R --> S
+    S --> D
     
-    M --> CORE
-    M --> CONT
-    M --> FACT
-    M --> INV
-    M --> NOM
+    D --> CORE
+    D --> CONT
+    D --> FACT
+    D --> INV
+    D --> NOM
     
     CORE --> DB
     CONT --> DB
@@ -573,7 +575,7 @@ flowchart TD
     </div>
 
     <footer>
-        <p> Sistema Contable Perú - Documentación Técnica v1.0</p>
+        <p> Sistema Contable Perú - Documentación Técnica v2.0 (FastAPI)</p>
     </footer>
 
     <script>

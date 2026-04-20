@@ -18,7 +18,7 @@ export default function Login() {
 
     try {
       const { data } = await authApi.login(username, password)
-      login(data.user, data.access)
+      login({ id: 0, username, email: '', tipo_usuario: 'cliente', empresa_id: null }, data.access_token)
       navigate('/')
     } catch (err: any) {
       setError(err.response?.data?.detail || 'Error al iniciar sesión')

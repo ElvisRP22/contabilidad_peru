@@ -3,23 +3,26 @@
 ## Project Overview
 - **Type**: Multi-tenant web accounting system for Peruvian public accountants/studios
 - **Clients**: < 50 companies (small studio)
-- **Tech Stack**: Python Django 5.x + React 18 + TypeScript + PostgreSQL (Docker)
+- **Tech Stack**: Python FastAPI + React 18 + TypeScript + PostgreSQL (Docker)
 - **Regulatory**: SUNAT (facturación electrónica), PLE, PLAME
 
 ## Architecture
 
 ```
-contabilidad_peru/
-├── backend/                    # Django REST API
-│   ├── apps/
-│   │   ├── core/              # Auth, Empresas, Tenant
-│   │   ├── contabilidad/      # Plan de Cuentas, Asientos
-│   │   ├── facturacion/        # CPE, XML, SUNAT
-│   │   ├── inventario/         # Productos, Kárdex
-│   │   └── nomina/            # Empleados, Planillas
-│   └── contabilidad_peru/      # Settings
-├── frontend/                   # React + TypeScript + Vite
-└── docker-compose.yml
+backend/
+├── app/
+│   ├── main.py                 # FastAPI app entry point
+│   ├── config.py               # Settings
+│   ├── database.py             # SQLModel connection
+│   ├── auth/                   # JWT authentication
+│   ├── core/                   # Users, Companies
+│   ├── contabilidad/           # Chart of accounts, Journal entries
+│   ├── facturacion/            # CPE, XML, SUNAT
+│   ├── inventario/             # Products, Stock
+│   └── nomina/                 # Employees, Payroll
+├── Dockerfile
+└── requirements.txt
+frontend/                        # React + TypeScript + Vite
 ```
 
 ## Key Developer Commands
@@ -31,17 +34,12 @@ docker-compose up --build
 # Backend (individual)
 cd backend
 pip install -r requirements.txt
-python manage.py makemigrations  # RUN FIRST TIME
-python manage.py migrate
-python manage.py runserver
+uvicorn app.main:app --reload
 
 # Frontend (individual)
 cd frontend
 npm install
 npm run dev
-
-# Create superuser
-python manage.py createsuperuser
 ```
 
 ## Database Tables
@@ -49,7 +47,7 @@ python manage.py createsuperuser
 ### core (Usuario y Empresa)
 | Table | Description |
 |-------|------------|
-| core_usuario | Users (extends AbstractUser) |
+| core_usuario | Users |
 | core_empresa | Companies (tenant) |
 | core_serie_documento | Document series config |
 | core_parametro | System parameters |
@@ -91,63 +89,68 @@ python manage.py createsuperuser
 
 ## REST API Endpoints
 
-### Core - Auth
+### Auth
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| POST | `/api/core/auth/login/` | JWT Login |
-| POST | `/api/core/auth/refresh/` | Refresh token |
+| POST | `/api/auth/login` | JWT Login |
+| POST | `/api/auth/refresh` | Refresh token |
+| GET | `/api/auth/me` | Current user |
 
 ### Core - Usuarios
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET/POST | `/api/core/usuarios/` | List/Create |
-| GET/PUT/DELETE | `/api/core/usuarios/{id}/` | CRUD |
+| GET/POST | `/api/core/usuarios` | List/Create |
+| GET/PUT/DELETE | `/api/core/usuarios/{id}` | CRUD |
 
 ### Core - Empresas
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET/POST | `/api/core/empresas/` | List/Create |
-| GET/PUT/DELETE | `/api/core/empresas/{id}/` | CRUD |
-| GET | `/api/core/empresas/{id}/series/` | Get series |
-| POST | `/api/core/empresas/{id}/agregar_serie/` | Add series |
+| GET/POST | `/api/core/empresas` | List/Create |
+| GET/PUT/DELETE | `/api/core/empresas/{id}` | CRUD |
+| GET | `/api/core/empresas/{id}/series` | Get series |
+| POST | `/api/core/empresas/{id}/series` | Add series |
 
 ### Contabilidad
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET/POST | `/api/contabilidad/plan-cuentas/` | List/Create accounts |
-| GET/PUT/DELETE | `/api/contabilidad/plan-cuentas/{id}/` | CRUD |
-| GET/POST | `/api/contabilidad/asientos/` | List/Create entries |
-| POST | `/api/contabilidad/asientos/{id}/aprobar/` | Approve |
-| POST | `/api/contabilidad/asientos/{id}/cerrar/` | Close |
-| GET | `/api/contabilidad/reportes/balance_comprobacion/?fecha=` | Balance |
-| GET | `/api/contabilidad/reportes/mayor/?cuenta_id=&fecha_inicio=&fecha_fin=` | Mayor |
+| GET/POST | `/api/contabilidad/plan-cuentas` | List/Create accounts |
+| GET/PUT/DELETE | `/api/contabilidad/plan-cuentas/{id}` | CRUD |
+| GET/POST | `/api/contabilidad/asientos` | List/Create entries |
+| GET | `/api/contabilidad/asientos/{id}` | Get entry |
+| POST | `/api/contabilidad/asientos/{id}/aprobar` | Approve |
+| POST | `/api/contabilidad/asientos/{id}/cerrar` | Close |
+| GET | `/api/contabilidad/reportes/balance_comprobacion` | Balance |
+| GET | `/api/contabilidad/reportes/mayor` | Mayor |
 
 ### Facturación
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET/POST | `/api/facturacion/comprobantes/` | List/Create CPE |
-| POST | `/api/facturacion/comprobantes/{id}/generar/` | Generate XML |
-| POST | `/api/facturacion/comprobantes/{id}/firmar/` | Sign XML |
-| POST | `/api/facturacion/comprobantes/{id}/enviar_sunat/` | Send to SUNAT |
-| GET | `/api/facturacion/comprobantes/{id}/obtener_pdf/` | Get PDF |
-| POST | `/api/facturacion/comprobantes/{id}/anular/` | Void CPE |
+| GET/POST | `/api/facturacion/comprobantes` | List/Create CPE |
+| GET | `/api/facturacion/comprobantes/{id}` | Get CPE |
+| POST | `/api/facturacion/comprobantes/{id}/generar` | Generate XML |
+| POST | `/api/facturacion/comprobantes/{id}/firmar` | Sign XML |
+| POST | `/api/facturacion/comprobantes/{id}/enviar_sunat` | Send to SUNAT |
+| GET | `/api/facturacion/comprobantes/{id}/obtener_pdf` | Get PDF |
+| POST | `/api/facturacion/comprobantes/{id}/anular` | Void CPE |
 
 ### Inventario
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET/POST | `/api/inventario/almacenes/` | Warehouses |
-| GET/POST | `/api/inventario/categorias/` | Categories |
-| GET/POST | `/api/inventario/productos/` | Products |
-| GET/POST | `/api/inventario/kardex/` | Stock movements |
-| GET | `/api/inventario/productos/{id}/kardex/?desde=&hasta=` | Product kardex |
+| GET/POST | `/api/inventario/almacenes` | Warehouses |
+| GET/POST | `/api/inventario/categorias` | Categories |
+| GET/POST | `/api/inventario/productos` | Products |
+| GET/PUT/DELETE | `/api/inventario/productos/{id}` | CRUD |
+| GET | `/api/inventario/productos/{id}/kardex` | Product kardex |
+| POST | `/api/inventario/kardex` | Create movement |
 
 ### Nómina
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET/POST | `/api/nomina/empleados/` | Employees |
-| GET/POST | `/api/nomina/planillas/` | Payrolls |
-| POST | `/api/nomina/planillas/{id}/generar_planilla/` | Generate details |
-| GET | `/api/nomina/planillas/{id}/generar_plame/` | Export PLAME |
+| GET/POST | `/api/nomina/empleados` | Employees |
+| GET/PUT/DELETE | `/api/nomina/empleados/{id}` | CRUD |
+| GET/POST | `/api/nomina/planillas` | Payrolls |
+| POST | `/api/nomina/planillas/{id}/generar_planilla` | Generate details |
+| GET | `/api/nomina/planillas/{id}/generar_plame` | Export PLAME |
 
 ## Business Rules
 
@@ -176,37 +179,27 @@ python manage.py createsuperuser
 ## Multi-Tenant Structure
 - One database (shared schema)
 - `empresa` FK on all financial models
-- TenantMiddleware filters by `request.user.empresa`
-- Use `request.user.empresa` for tenant context
+- Use `current_user.empresa_id` for tenant context
 
 ## Environment Setup
 ```bash
 # Backend .env
-DATABASE_URL=postgres://admin:cont123456@localhost:5432/contabilidad
-SECRET_KEY=django-secret-key-change-in-production
-DEBUG=True
-POSTGRES_HOST=localhost
-POSTGRES_DB=contabilidad
-POSTGRES_USER=admin
-POSTGRES_PASSWORD=cont123456
+DATABASE_URL=postgresql://admin:cont123456@localhost:5432/contabilidad
+SECRET_KEY=your-secret-key
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=60
+REFRESH_TOKEN_EXPIRE_DAYS=7
 
 # Frontend .env (optional)
 VITE_API_URL=http://localhost:8000
 ```
 
-## Important Notes
-- Run `makemigrations` before first deploy - no migrations exist
-- FACTURACION: XML signing services are stubs (implement with xmlsec)
-- Certificate digital files stored in `core.Empresa.certificado_digital`
-- OSE uses token-based auth (`empresa.ose_token`)
-- PLE generator script needed for monthly SUNAT files
-
 ## Testing Commands
 ```bash
 # Backend
 cd backend
-pip install pytest pytest-django pytest-cov
-pytest --cov=apps --cov-report=html
+pip install pytest pytest-cov
+pytest --cov=app --cov-report=html
 
 # Frontend
 cd frontend
@@ -214,6 +207,52 @@ npm run test
 ```
 
 ## Known Issues
-- apps.facturacion/serializers.py has duplicate class (fix required)
-- Some fields use Spanish names in nomina models
-- Apps need migration files created before use
+- XML signing services are stubs (implement with xmlsec)
+- Certificate digital files stored in `core_empresa.certificado_digital`
+- OSE uses token-based auth (`empresa.ose_token`)
+- PLE generator script needed for monthly SUNAT files
+
+## Dependencies
+
+### Backend (requirements.txt)
+```
+fastapi==0.115.0
+uvicorn[standard]==0.32.0
+sqlmodel==0.0.20
+sqlalchemy==2.0.35
+psycopg2-binary==2.9.9
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+pydantic==2.9.2
+pydantic-settings==2.5.2
+```
+
+### Frontend
+- React 18 + TypeScript
+- Vite (dev server)
+- Axios (HTTP client)
+- Zustand (state management)
+- React Router DOM
+
+## Running the Application
+
+```bash
+# Development with Docker
+docker-compose up --build
+
+# Or individual services:
+# Terminal 1: Backend
+cd backend
+pip install -r requirements.txt
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+
+# Terminal 2: Frontend
+cd frontend
+npm install
+npm run dev
+```
+
+Access points:
+- Frontend: http://localhost:5173
+- Backend API: http://localhost:8000
+- API Docs: http://localhost:8000/docs
