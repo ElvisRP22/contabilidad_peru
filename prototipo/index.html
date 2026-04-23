@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ContaPerú - Sistema Contable</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .sidebar { transition: all 0.3s; }
+        .sidebar-collapsed { width: 64px; }
+        .card-hover:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .table-hover tbody tr:hover { background: #f1f5f9; }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b border-gray-200 fixed w-full z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <button onclick="toggleSidebar()" class="p-2 rounded-md hover:bg-gray-100">
+                        <i class="fas fa-bars text-gray-600"></i>
+                    </button>
+                    <div class="ml-4 flex items-center">
+                        <i class="fas fa-calculator text-blue-600 text-xl"></i>
+                        <span class="ml-2 text-xl font-bold text-gray-800">ContaPerú</span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="p-2 rounded-full hover:bg-gray-100 relative">
+                        <i class="fas fa-bell text-gray-600"></i>
+                        <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                    </button>
+                    <div class="flex items-center space-x-2">
+                        <img src="https://ui-avatars.com/api/?name=Jaime+Saenz&background=3b82f6&color=fff" class="w-8 h-8 rounded-full">
+                        <span class="text-sm font-medium text-gray-700">Jaime Saenz</span>
+                        <i class="fas fa-chevron-down text-xs text-gray-400"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="fixed left-0 top-16 h-full bg-white border-r border-gray-200 w-64 z-40">
+        <div class="py-4 px-3 space-y-1">
+            <a href="#" onclick="showPage('dashboard')" class="nav-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 group" data-page="dashboard">
+                <i class="fas fa-home w-6 text-gray-400 group-hover:text-blue-600"></i>
+                <span class="ml-3">Dashboard</span>
+            </a>
+            
+            <a href="#" onclick="showPage('empresas')" class="nav-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 group" data-page="empresas">
+                <i class="fas fa-building w-6 text-gray-400 group-hover:text-blue-600"></i>
+                <span class="ml-3">Empresas</span>
+            </a>
+
+            <div class="pt-2 pb-2">
+                <p class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Contabilidad</p>
+            </div>
+
+            <a href="#" onclick="showPage('plan-cuentas')" class="nav-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 group" data-page="plan-cuentas">
+                <i class="fas fa-book w-6 text-gray-400 group-hover:text-blue-600"></i>
+                <span class="ml-3">Plan de Cuentas</span>
+            </a>
+
+            <a href="#" onclick="showPage('asientos')" class="nav-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 group" data-page="asientos">
+                <i class="fas fa-calculator w-6 text-gray-400 group-hover:text-blue-600"></i>
+                <span class="ml-3">Asientos</span>
+            </a>
+
+            <a href="#" onclick="showPage('libros')" class="nav-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 group" data-page="libros">
+                <i class="fas fa-file-alt w-6 text-gray-400 group-hover:text-blue-600"></i>
+                <span class="ml-3">Libros</span>
+            </a>
+
+            <div class="pt-2 pb-2">
+                <p class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Facturación</p>
+            </div>
+
+            <a href="#" onclick="showPage('comprobantes')" class="nav-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 group" data-page="comprobantes">
+                <i class="fas fa-file-invoice w-6 text-gray-400 group-hover:text-blue-600"></i>
+                <span class="ml-3">Comprobantes</span>
+            </a>
+
+            <a href="#" onclick="showPage('clientes')" class="nav-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 group" data-page="clientes">
+                <i class="fas fa-users w-6 text-gray-400 group-hover:text-blue-600"></i>
+                <span class="ml-3">Clientes</span>
+            </a>
+
+            <div class="pt-2 pb-2">
+                <p class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Inventario</p>
+            </div>
+
+            <a href="#" onclick="showPage('productos')" class="nav-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 group" data-page="productos">
+                <i class="fas fa-boxes w-6 text-gray-400 group-hover:text-blue-600"></i>
+                <span class="ml-3">Productos</span>
+            </a>
+
+            <a href="#" onclick="showPage('almacenes')" class="nav-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 group" data-page="almacenes">
+                <i class="fas fa-warehouse w-6 text-gray-400 group-hover:text-blue-600"></i>
+                <span class="ml-3">Almacenes</span>
+            </a>
+
+            <div class="pt-2 pb-2">
+                <p class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Nómina</p>
+            </div>
+
+            <a href="#" onclick="showPage('empleados')" class="nav-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 group" data-page="empleados">
+                <i class="fas fa-user-tie w-6 text-gray-400 group-hover:text-blue-600"></i>
+                <span class="ml-3">Empleados</span>
+            </a>
+
+            <a href="#" onclick="showPage('planillas')" class="nav-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 group" data-page="planillas">
+                <i class="fas fa-users-cog w-6 text-gray-400 group-hover:text-blue-600"></i>
+                <span class="ml-3">Planillas</span>
+            </a>
+
+            <div class="pt-2 pb-2">
+                <p class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Sistema</p>
+            </div>
+
+            <a href="../documentacion/index.html" target="_blank" class="nav-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-purple-50 hover:text-purple-600 group">
+                <i class="fas fa-book w-6 text-gray-400 group-hover:text-purple-600"></i>
+                <span class="ml-3">Documentación</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main id="main-content" class="pt-16 ml-64 min-h-screen transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            
+            <!-- Dashboard Page -->
+            <div id="page-dashboard" class="page-content">
+                <div class="mb-8">
+                    <h1 class="text-2xl font-bold text-gray-800">Dashboard</h1>
+                    <p class="text-gray-500">Resumen general del sistema</p>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 card-hover transition-all">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-500">Empresas Activas</p>
+                                <p class="text-3xl font-bold text-gray-800">12</p>
+                            </div>
+                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-building text-blue-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <p class="text-xs text-green-600 mt-2"><i class="fas fa-arrow-up"></i> 2 este mes</p>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 card-hover transition-all">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-500">Comprobantes Emitidos</p>
+                                <p class="text-3xl font-bold text-gray-800">1,234</p>
+                            </div>
+                            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-file-invoice text-green-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <p class="text-xs text-green-600 mt-2"><i class="fas fa-arrow-up"></i> 156 este mes</p>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 card-hover transition-all">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-500">Total Ventas (S/)</p>
+                                <p class="text-3xl font-bold text-gray-800">125,400</p>
+                            </div>
+                            <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-soles-sign text-purple-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <p class="text-xs text-green-600 mt-2"><i class="fas fa-arrow-up"></i> 18% vs mes anterior</p>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 card-hover transition-all">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-500">Empleados</p>
+                                <p class="text-3xl font-bold text-gray-800">48</p>
+                            </div>
+                            <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-users text-orange-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2">3 empresas</p>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Ventas Mensuales</h3>
+                        <div class="h-64 flex items-end justify-around space-x-2">
+                            <div class="w-full bg-blue-500 rounded-t" style="height: 40%"></div>
+                            <div class="w-full bg-blue-500 rounded-t" style="height: 55%"></div>
+                            <div class="w-full bg-blue-500 rounded-t" style="height: 45%"></div>
+                            <div class="w-full bg-blue-500 rounded-t" style="height: 70%"></div>
+                            <div class="w-full bg-blue-500 rounded-t" style="height: 60%"></div>
+                            <div class="w-full bg-blue-500 rounded-t" style="height: 85%"></div>
+                            <div class="w-full bg-blue-500 rounded-t" style="height: 75%"></div>
+                            <div class="w-full bg-blue-500 rounded-t" style="height: 90%"></div>
+                            <div class="w-full bg-blue-500 rounded-t" style="height: 65%"></div>
+                            <div class="w-full bg-blue-500 rounded-t" style="height: 80%"></div>
+                            <div class="w-full bg-blue-500 rounded-t" style="height: 70%"></div>
+                            <div class="w-full bg-blue-500 rounded-t" style="height: 95%"></div>
+                        </div>
+                        <div class="flex justify-around mt-2 text-xs text-gray-500">
+                            <span>Ene</span><span>Feb</span><span>Mar</span><span>Abr</span><span>May</span><span>Jun</span>
+                            <span>Jul</span><span>Ago</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dic</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Comprobantes por Estado</h3>
+                        <div class="flex items-center justify-center h-48">
+                            <div class="relative w-40 h-40">
+                                <svg class="w-full h-full" viewBox="0 0 36 36">
+                                    <path class="text-green-500" stroke="currentColor" stroke-width="3" fill="none" stroke-dasharray="70, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                    <path class="text-blue-500" stroke="currentColor" stroke-width="3" fill="none" stroke-dasharray="20, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                    <path class="text-yellow-500" stroke="currentColor" stroke-width="3" fill="none" stroke-dasharray="7, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                    <path class="text-red-500" stroke="currentColor" stroke-width="3" fill="none" stroke-dasharray="3, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="flex justify-center space-x-6 mt-4">
+                            <span class="flex items-center text-sm"><span class="w-3 h-3 bg-green-500 rounded-full mr-2"></span>Aceptados</span>
+                            <span class="flex items-center text-sm"><span class="w-3 h-3 bg-blue-500 rounded-full mr-2"></span>Enviados</span>
+                            <span class="flex items-center text-sm"><span class="w-3 h-3 bg-yellow-500 rounded-full mr-2"></span>Pendientes</span>
+                            <span class="flex items-center text-sm"><span class="w-3 h-3 bg-red-500 rounded-full mr-2"></span>Rechazados</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Actividad Reciente</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-3">
+                                    <i class="fas fa-file-invoice text-green-600"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-800">Factura F001-00001234 creada</p>
+                                    <p class="text-xs text-gray-500">Empresa ABC S.A.C</p>
+                                </div>
+                            </div>
+                            <span class="text-xs text-gray-400">Hace 5 min</span>
+                        </div>
+                        <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                                    <i class="fas fa-calculator text-blue-600"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-800">Asiento #001025 aprobado</p>
+                                    <p class="text-xs text-gray-500">Empresa XYZ</p>
+                                </div>
+                            </div>
+                            <span class="text-xs text-gray-400">Hace 1 hora</span>
+                        </div>
+                        <div class="flex items-center justify-between py-3">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center mr-3">
+                                    <i class="fas fa-user-plus text-purple-600"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-800">Empleado Juan Pérez registrado</p>
+                                    <p class="text-xs text-gray-500">Empresa ABC S.A.C</p>
+                                </div>
+                            </div>
+                            <span class="text-xs text-gray-400">Hace 3 horas</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empresas Page -->
+            <div id="page-empresas" class="page-content hidden">
+                <div class="flex justify-between items-center mb-8">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">Empresas</h1>
+                        <p class="text-gray-500">Gestión de empresas clientes</p>
+                    </div>
+                    <button onclick="openModal('modal-empresa')" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center">
+                        <i class="fas fa-plus mr-2"></i> Nueva Empresa
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                    <div class="p-4 border-b border-gray-100 flex justify-between items-center">
+                        <div class="relative w-96">
+                            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            <input type="text" placeholder="Buscar empresa..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+                        <div class="flex space-x-2">
+                            <button class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm">
+                                <i class="fas fa-download mr-1"></i> Exportar
+                            </button>
+                        </div>
+                    </div>
+                    <table class="w-full table-hover">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">RUC</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Razón Social</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Régimen</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">OSE</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Estado</th>
+                                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 text-sm font-mono text-gray-800">20123456789</td>
+                                <td class="px-6 py-4 text-sm text-gray-800">Empresa ABC S.A.C</td>
+                                <td class="px-6 py-4 text-sm text-gray-600">General</td>
+                                <td class="px-6 py-4"><span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">Nubefact</span></td>
+                                <td class="px-6 py-4"><span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">Activa</span></td>
+                                <td class="px-6 py-4 text-right space-x-2">
+                                    <button class="text-blue-600 hover:text-blue-800"><i class="fas fa-edit"></i></button>
+                                    <button class="text-red-600 hover:text-red-800"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 text-sm font-mono text-gray-800">20987654321</td>
+                                <td class="px-6 py-4 text-sm text-gray-800">Distribuciones XYZ S.A.</td>
+                                <td class="px-6 py-4 text-sm text-gray-600">MYPE</td>
+                                <td class="px-6 py-4"><span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">Efact</span></td>
+                                <td class="px-6 py-4"><span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">Activa</span></td>
+                                <td class="px-6 py-4 text-right space-x-2">
+                                    <button class="text-blue-600 hover:text-blue-800"><i class="fas fa-edit"></i></button>
+                                    <button class="text-red-600 hover:text-red-800"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Plan de Cuentas Page -->
+            <div id="page-plan-cuentas" class="page-content hidden">
+                <div class="flex justify-between items-center mb-8">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">Plan de Cuentas</h1>
+                        <p class="text-gray-500">Catálogo de cuentas PCGE</p>
+                    </div>
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                        <i class="fas fa-plus mr-2"></i> Nueva Cuenta
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                    <div class="p-4 border-b border-gray-100">
+                        <div class="flex space-x-4">
+                            <input type="text" placeholder="Código o nombre..." class="flex-1 px-4 py-2 border border-gray-300 rounded-lg">
+                            <select class="px-4 py-2 border border-gray-300 rounded-lg">
+                                <option>Todos los niveles</option>
+                                <option>Nivel 1</option>
+                                <option>Nivel 2</option>
+                                <option>Nivel 3</option>
+                            </select>
+                            <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Código</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Nombre</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Naturaleza</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Tipo</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Nivel</th>
+                                <th class="px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Movimiento</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <tr class="bg-gray-50 font-semibold">
+                                <td class="px-6 py-3 text-sm">1</td>
+                                <td class="px-6 py-3 text-sm">ACTIVO</td>
+                                <td class="px-6 py-3 text-sm">Deudora</td>
+                                <td class="px-6 py-3 text-sm">Activo</td>
+                                <td class="px-6 py-3 text-sm">1</td>
+                                <td class="px-6 py-3 text-center">-</td>
+                            </tr>
+                            <tr class="bg-gray-50 font-semibold">
+                                <td class="px-6 py-3 text-sm">10</td>
+                                <td class="px-6 py-3 text-sm">&nbsp;&nbsp;EFECTIVO Y EQUIVALENTES DE EFECTIVO</td>
+                                <td class="px-6 py-3 text-sm">Deudora</td>
+                                <td class="px-6 py-3 text-sm">Activo</td>
+                                <td class="px-6 py-3 text-sm">2</td>
+                                <td class="px-6 py-3 text-center">-</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-3 text-sm font-mono">101</td>
+                                <td class="px-6 py-3 text-sm">&nbsp;&nbsp;&nbsp;&nbsp;Caja</td>
+                                <td class="px-6 py-3 text-sm">Deudora</td>
+                                <td class="px-6 py-3 text-sm">Activo</td>
+                                <td class="px-6 py-3 text-sm">3</td>
+                                <td class="px-6 py-3 text-center"><span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded">Sí</span></td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-3 text-sm font-mono">104</td>
+                                <td class="px-6 py-3 text-sm">&nbsp;&nbsp;&nbsp;&nbsp;Bancos</td>
+                                <td class="px-6 py-3 text-sm">Deudora</td>
+                                <td class="px-6 py-3 text-sm">Activo</td>
+                                <td class="px-6 py-3 text-sm">3</td>
+                                <td class="px-6 py-3 text-center"><span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded">Sí</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Asientos Page -->
+            <div id="page-asientos" class="page-content hidden">
+                <div class="flex justify-between items-center mb-8">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">Asientos Contables</h1>
+                        <p class="text-gray-500">Registro de operaciones contables</p>
+                    </div>
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                        <i class="fas fa-plus mr-2"></i> Nuevo Asiento
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-6">
+                    <div class="p-4 border-b border-gray-100 flex gap-4">
+                        <input type="date" class="px-4 py-2 border border-gray-300 rounded-lg">
+                        <input type="date" class="px-4 py-2 border border-gray-300 rounded-lg">
+                        <select class="px-4 py-2 border border-gray-300 rounded-lg">
+                            <option>Todos los estados</option>
+                            <option>Pendiente</option>
+                            <option>Aprobado</option>
+                            <option>Cerrado</option>
+                        </select>
+                        <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                            <i class="fas fa-filter"></i>
+                        </button>
+                    </div>
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">#</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Fecha</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Glosa</th>
+                                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Debe</th>
+                                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Haber</th>
+                                <th class="px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Estado</th>
+                                <th class="px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 text-sm font-mono">000001</td>
+                                <td class="px-6 py-4 text-sm">19/04/2026</td>
+                                <td class="px-6 py-4 text-sm">Venta de servicios - Factura F001-123</td>
+                                <td class="px-6 py-4 text-sm text-right">S/ 1,180.00</td>
+                                <td class="px-6 py-4 text-sm text-right">S/ 1,180.00</td>
+                                <td class="px-6 py-4 text-center"><span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">Cerrado</span></td>
+                                <td class="px-6 py-4 text-center">
+                                    <button class="text-gray-500 hover:text-gray-700"><i class="fas fa-eye"></i></button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 text-sm font-mono">000002</td>
+                                <td class="px-6 py-4 text-sm">19/04/2026</td>
+                                <td class="px-6 py-4 text-sm">Pago de alquiler - Recibo 001</td>
+                                <td class="px-6 py-4 text-sm text-right">S/ 3,000.00</td>
+                                <td class="px-6 py-4 text-sm text-right">S/ 3,000.00</td>
+                                <td class="px-6 py-4 text-center"><span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">Aprobado</span></td>
+                                <td class="px-6 py-4 text-center space-x-1">
+                                    <button class="text-blue-600 hover:text-blue-800"><i class="fas fa-check"></i></button>
+                                    <button class="text-gray-500 hover:text-gray-700"><i class="fas fa-eye"></i></button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 text-sm font-mono">000003</td>
+                                <td class="px-6 py-4 text-sm">19/04/2026</td>
+                                <td class="px-6 py-4 text-sm">Por regularizar</td>
+                                <td class="px-6 py-4 text-sm text-right">S/ 500.00</td>
+                                <td class="px-6 py-4 text-sm text-right">S/ 450.00</td>
+                                <td class="px-6 py-4 text-center"><span class="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs rounded-full">Pendiente</span></td>
+                                <td class="px-6 py-4 text-center space-x-1">
+                                    <button class="text-blue-600 hover:text-blue-800"><i class="fas fa-edit"></i></button>
+                                    <button class="text-green-600 hover:text-green-800"><i class="fas fa-check"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Comprobantes Page -->
+            <div id="page-comprobantes" class="page-content hidden">
+                <div class="flex justify-between items-center mb-8">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">Comprobantes Electrónicos</h1>
+                        <p class="text-gray-500">Facturación electrónica SUNAT</p>
+                    </div>
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                        <i class="fas fa-plus mr-2"></i> Nuevo Comprobante
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-6">
+                    <div class="p-4 border-b border-gray-100 flex gap-4 flex-wrap">
+                        <select class="px-4 py-2 border border-gray-300 rounded-lg">
+                            <option>Todos los tipos</option>
+                            <option>Factura</option>
+                            <option>Boleta</option>
+                            <option>Nota de Crédito</option>
+                            <option>Nota de Débito</option>
+                        </select>
+                        <select class="px-4 py-2 border border-gray-300 rounded-lg">
+                            <option>Todos los estados</option>
+                            <option>Borrador</option>
+                            <option>Generado</option>
+                            <option>Enviado</option>
+                            <option>Aceptado</option>
+                            <option>Anulado</option>
+                        </select>
+                        <input type="date" class="px-4 py-2 border border-gray-300 rounded-lg">
+                        <input type="date" class="px-4 py-2 border border-gray-300 rounded-lg">
+                        <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Número</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Tipo</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Cliente</th>
+                                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Total</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Fecha</th>
+                                <th class="px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Estado</th>
+                                <th class="px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 text-sm font-mono">F001-00001234</td>
+                                <td class="px-6 py-4 text-sm">Factura</td>
+                                <td class="px-6 py-4 text-sm">Empresa XYZ S.A.C</td>
+                                <td class="px-6 py-4 text-sm text-right">S/ 1,180.00</td>
+                                <td class="px-6 py-4 text-sm">19/04/2026</td>
+                                <td class="px-6 py-4 text-center"><span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">Aceptado</span></td>
+                                <td class="px-6 py-4 text-center space-x-1">
+                                    <button class="text-blue-600 hover:text-blue-800" title="Ver PDF"><i class="fas fa-file-pdf"></i></button>
+                                    <button class="text-gray-600 hover:text-gray-800" title="Ver XML"><i class="fas fa-code"></i></button>
+                                    <button class="text-purple-600 hover:text-purple-800" title="CDR"><i class="fas fa-download"></i></button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 text-sm font-mono">F001-00001235</td>
+                                <td class="px-6 py-4 text-sm">Factura</td>
+                                <td class="px-6 py-4 text-sm">Juan Pérez</td>
+                                <td class="px-6 py-4 text-sm text-right">S/ 590.00</td>
+                                <td class="px-6 py-4 text-sm">19/04/2026</td>
+                                <td class="px-6 py-4 text-center"><span class="px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded-full">Enviado</span></td>
+                                <td class="px-6 py-4 text-center space-x-1">
+                                    <button class="text-blue-600 hover:text-blue-800"><i class="fas fa-file-pdf"></i></button>
+                                    <button class="text-green-600 hover:text-green-800"><i class="fas fa-sync"></i></button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 text-sm font-mono">B001-00000567</td>
+                                <td class="px-6 py-4 text-sm">Boleta</td>
+                                <td class="px-6 py-4 text-sm">María García</td>
+                                <td class="px-6 py-4 text-sm text-right">S/ 118.00</td>
+                                <td class="px-6 py-4 text-sm">18/04/2026</td>
+                                <td class="px-6 py-4 text-center"><span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">Borrador</span></td>
+                                <td class="px-6 py-4 text-center space-x-1">
+                                    <button class="text-blue-600 hover:text-blue-800"><i class="fas fa-file-invoice"></i></button>
+                                    <button class="text-green-600 hover:text-green-800"><i class="fas fa-paper-plane"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Productos Page -->
+            <div id="page-productos" class="page-content hidden">
+                <div class="flex justify-between items-center mb-8">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">Inventario</h1>
+                        <p class="text-gray-500">Gestión de productos</p>
+                    </div>
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                        <i class="fas fa-plus mr-2"></i> Nuevo Producto
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-white p-4 rounded-lg border border-gray-100">
+                        <p class="text-sm text-gray-500">Total Productos</p>
+                        <p class="text-2xl font-bold text-gray-800">245</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg border border-gray-100">
+                        <p class="text-sm text-gray-500">Bajo Stock</p>
+                        <p class="text-2xl font-bold text-red-600">12</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg border border-gray-100">
+                        <p class="text-sm text-gray-500">Sin Stock</p>
+                        <p class="text-2xl font-bold text-red-600">3</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg border border-gray-100">
+                        <p class="text-sm text-gray-500">Valorizado (S/)</p>
+                        <p class="text-2xl font-bold text-gray-800">125,400</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                    <div class="p-4 border-b border-gray-100 flex justify-between items-center">
+                        <div class="relative w-96">
+                            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            <input type="text" placeholder="Buscar producto..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg">
+                        </div>
+                        <div class="flex space-x-2">
+                            <select class="px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                                <option>Todas las categorías</option>
+                                <option>Electrónica</option>
+                                <option>Oficina</option>
+                            </select>
+                        </div>
+                    </div>
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Código</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Producto</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Categoría</th>
+                                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Stock</th>
+                                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Costo</th>
+                                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Precio</th>
+                                <th class="px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 text-sm font-mono">PROD-001</td>
+                                <td class="px-6 py-4 text-sm">Laptop HP 15s</td>
+                                <td class="px-6 py-4 text-sm">Electrónica</td>
+                                <td class="px-6 py-4 text-sm text-right">15</td>
+                                <td class="px-6 py-4 text-sm text-right">S/ 2,500.00</td>
+                                <td class="px-6 py-4 text-sm text-right">S/ 3,199.00</td>
+                                <td class="px-6 py-4 text-center"><span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded">OK</span></td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 text-sm font-mono">PROD-002</td>
+                                <td class="px-6 py-4 text-sm">Mouse Inalámbrico</td>
+                                <td class="px-6 py-4 text-sm">Accesorios</td>
+                                <td class="px-6 py-4 text-sm text-right text-red-600 font-semibold">3</td>
+                                <td class="px-6 py-4 text-sm text-right">S/ 45.00</td>
+                                <td class="px-6 py-4 text-sm text-right">S/ 79.00</td>
+                                <td class="px-6 py-4 text-center"><span class="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs rounded">Bajo</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Empleados Page -->
+            <div id="page-empleados" class="page-content hidden">
+                <div class="flex justify-between items-center mb-8">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">Empleados</h1>
+                        <p class="text-gray-500">Gestión de personal</p>
+                    </div>
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                        <i class="fas fa-user-plus mr-2"></i> Nuevo Empleado
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                    <div class="p-4 border-b border-gray-100 flex justify-between items-center">
+                        <div class="relative w-96">
+                            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            <input type="text" placeholder="Buscar empleado..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg">
+                        </div>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" class="rounded" checked>
+                            <span class="text-sm text-gray-600">Solo activos</span>
+                        </label>
+                    </div>
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">DNI</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Nombre</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Cargo</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Área</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Fecha Ingreso</th>
+                                <th class="px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 text-sm font-mono">12345678</td>
+                                <td class="px-6 py-4 text-sm">Juan Pérez López</td>
+                                <td class="px-6 py-4 text-sm">Contador</td>
+                                <td class="px-6 py-4 text-sm">Contabilidad</td>
+                                <td class="px-6 py-4 text-sm">15/01/2023</td>
+                                <td class="px-6 py-4 text-center"><span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">Activo</span></td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 text-sm font-mono">87654321</td>
+                                <td class="px-6 py-4 text-sm">María García Sánchez</td>
+                                <td class="px-6 py-4 text-sm">Asistente</td>
+                                <td class="px-6 py-4 text-sm">Administración</td>
+                                <td class="px-6 py-4 text-sm">20/03/2024</td>
+                                <td class="px-6 py-4 text-center"><span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">Activo</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Planillas Page -->
+            <div id="page-planillas" class="page-content hidden">
+                <div class="flex justify-between items-center mb-8">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">Planillas</h1>
+                        <p class="text-gray-500">Gestión de remuneraciones</p>
+                    </div>
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                        <i class="fas fa-plus mr-2"></i> Nueva Planilla
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-white p-4 rounded-lg border border-gray-100">
+                        <p class="text-sm text-gray-500">Total Empleados</p>
+                        <p class="text-2xl font-bold text-gray-800">48</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg border border-gray-100">
+                        <p class="text-sm text-gray-500">Planilla Abril</p>
+                        <p class="text-2xl font-bold text-gray-800">S/ 85,400</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg border border-gray-100">
+                        <p class="text-sm text-gray-500">Neto a Pagar</p>
+                        <p class="text-2xl font-bold text-green-600">S/ 68,320</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg border border-gray-100">
+                        <p class="text-sm text-gray-500">Aportes</p>
+                        <p class="text-2xl font-bold text-blue-600">S/ 7,686</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Período</th>
+                                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Empleados</th>
+                                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Ingresos</th>
+                                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Descuentos</th>
+                                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Neto</th>
+                                <th class="px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Estado</th>
+                                <th class="px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 text-sm font-semibold">Abril 2026</td>
+                                <td class="px-6 py-4 text-sm text-right">48</td>
+                                <td class="px-6 py-4 text-sm text-right">S/ 85,400.00</td>
+                                <td class="px-6 py-4 text-sm text-right">S/ 17,080.00</td>
+                                <td class="px-6 py-4 text-sm text-right font-semibold">S/ 68,320.00</td>
+                                <td class="px-6 py-4 text-center"><span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">Cerrado</span></td>
+                                <td class="px-6 py-4 text-center space-x-1">
+                                    <button class="text-blue-600 hover:text-blue-800" title="PDF"><i class="fas fa-file-pdf"></i></button>
+                                    <button class="text-green-600 hover:text-green-800" title="PLAME"><i class="fas fa-file-export"></i></button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 text-sm font-semibold">Marzo 2026</td>
+                                <td class="px-6 py-4 text-sm text-right">45</td>
+                                <td class="px-6 py-4 text-sm text-right">S/ 78,500.00</td>
+                                <td class="px-6 py-4 text-sm text-right">S/ 15,700.00</td>
+                                <td class="px-6 py-4 text-sm text-right font-semibold">S/ 62,800.00</td>
+                                <td class="px-6 py-4 text-center"><span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">Cerrado</span></td>
+                                <td class="px-6 py-4 text-center space-x-1">
+                                    <button class="text-blue-600 hover:text-blue-800"><i class="fas fa-file-pdf"></i></button>
+                                    <button class="text-green-600 hover:text-green-800"><i class="fas fa-file-export"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        function showPage(pageId) {
+            document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden'));
+            document.getElementById('page-' + pageId).classList.remove('hidden');
+            
+            document.querySelectorAll('.nav-item').forEach(n => {
+                n.classList.remove('bg-blue-50', 'text-blue-600');
+                if (n.dataset.page === pageId) {
+                    n.classList.add('bg-blue-50', 'text-blue-600');
+                }
+            });
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const main = document.getElementById('main-content');
+            if (sidebar.classList.contains('w-64')) {
+                sidebar.classList.remove('w-64');
+                sidebar.classList.add('w-16');
+                main.classList.remove('ml-64');
+                main.classList.add('ml-16');
+            } else {
+                sidebar.classList.add('w-64');
+                sidebar.classList.remove('w-16');
+                main.classList.add('ml-64');
+                main.classList.remove('ml-16');
+            }
+        }
+
+        // Initialize
+        showPage('dashboard');
+    </script>
+</body>
+</html>
